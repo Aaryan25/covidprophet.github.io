@@ -1,0 +1,1 @@
+web: gunicorn covidglassmorphism.wsgi --log-file -

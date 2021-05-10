@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    {% load static %} 
+    {% load humanize %}
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <meta name="description" content="" />
+    <meta name="author" content="" />
+    <title>Covid-19 India</title>
+    <!-- loader-->
+    <script src="https://momentjs.com/downloads/moment.min.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+    <!-- installing few libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.19.0/axios.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/downloadjs/1.4.8/download.min.js"></script>   
+    <link href="https://unpkg.com/bootstrap-table@1.18.3/dist/bootstrap-table.min.css" rel="stylesheet">
+<script
+      src="https://cdn.anychart.com/releases/8.9.0/js/anychart-core.min.js"
+      type="text/javascript"
+    ></script>
+    <script
+      src="https://cdn.anychart.com/releases/8.9.0/js/anychart-map.min.js"
+      type="text/javascript"
+    ></script>
+    <script src="https://cdn.anychart.com/geodata/2.1.0/countries/india/india.js"></script>
+<script src="https://unpkg.com/bootstrap-table@1.18.3/dist/bootstrap-table.min.js"></script>
+
+    <link href={% static '/css/pace.min.css' %} rel="stylesheet" />
+    <script src={% static '/js/pace.min.js' %}></script>
+    <!--favicon-->
+    <link rel="icon" href={% static '/images/favicon.ico' %} type="image/x-icon">
+
+    <!-- simplebar CSS-->
+    <link href={% static '/plugins/simplebar/css/simplebar.css' %} rel="stylesheet" />
+    <!-- Bootstrap core CSS-->
+    <link href={% static '/css/bootstrap.min.css' %} rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-wEmeIV1mKuiNpC+IOBjI7aAzPcEZeedi5yW5f2yOq55WWLwNGmvvx4Um1vskeMj0" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-p34f1UUtsS3wqzfto5wAAmdvj+osOnFyQFpp4Ua3gs/ZVWx6oOypYoCJhGGScy+8" crossorigin="anonymous"></script>
+
+    <!-- animate CSS-->
+    <link href={% static '/css/animate.css' %} rel="stylesheet" type="text/css" />
+    <!-- Icons CSS-->
+    <link href={% static '/css/icons.css' %} rel="stylesheet" type="text/css" />
+    <!-- Sidebar CSS-->
+    <link href={% static '/css/sidebar-menu.css' %} rel="stylesheet" />
+    <!-- Custom Style-->
+    <link href={% static '/css/app-style.css' %} rel="stylesheet" />
+    <link href={% static '/css/styles.css' %} rel="stylesheet" />
+
+
+<style>
+@media (min-width: 1281px) {
+  #map{
+              margin-top:30px;
+              width:1000px;
+              height:500px;
+          }  
+}
+      @media (min-width: 1025px) and (max-width: 1280px) {
+  
+  #map{
+              margin-top:30px;
+              width:1000px;
+              height:500px;
+          } 
+}
+@media (min-width: 768px) and (max-width: 1024px) {
+  #map{
+              margin-top:30px;
+              width:800px;
+              height:450px;
+          }
+}
+@media (min-width: 481px) and (max-width: 767px) { 
+ #map{
+              margin-top:30px;
+              width:500px;
+              height:450px;
+          }
+}
+
+@media (min-width: 320px) and (max-width: 480px) {
+  
+         #map{
+              margin-top:30px;
+              width:350px;
+              height:450px;
+          }  
+} 
+
+
+</style>
+       <script>
+        
+        function myFunction()
+        {      
+                    if($('#predict').is(':checked'))  {
+            myFunction2();
+        } else {
+                var input = $('#statenames').val();    
+                    $.ajax({
+                        url: '{% url 'get_response' %}',
+                        data: {
+                            'inputValue': input
+                        },
+                        dataType: 'json',
+                        success: function (data) {                        
+                        }
+                        }).then(function(data){
+         var optionsLine = 
+                            {
+                                chart: {
+                                    height: 328,
+                                    type: 'line',
+                                    toolbar: {
+                                        show: true,
+                                        offsetX: 0,
+                                        offsetY: 40,
+                                        tools: {
+                                        download: true,
+                                        selection: true,
+                                        zoom: true,
+                                        zoomin: true,
+                                        zoomout: true,
+                                        pan: true,
+                                        reset: true | '<img src="/static/icons/reset.png" width="30">',
+                                        customIcons: []
+                                        },
+                                        export: {
+                                        csv: {
+                                            filename: "Covid_data",
+                                            columnDelimiter: ',',
+                                            headerCategory: 'category',
+                                            headerValue: 'value',
+                                            dateFormatter(timestamp) {
+                                            return new Date(timestamp).toDateString()
+                                            }
+                                        },
+                                        svg: {
+                                            filename: "Covid_Graph_SVG",
+                                        },
+                                        png: {
+                                            filename: "Covid_Graph_PNG",
+                                        }
+                                    },
+                                    autoSelected: 'zoom' 
+                                    },
+                                    zoom: {
+                                        enabled: true,
+                                        type: 'x',
+                                        resetIcon: {
+                                            offsetX: 310,
+                                            offsetY: 40,
+                                            fillColor: '#f00',
+                                            strokeColor: '#37474F'
+                                        },
+                                        selection: {
+                                            background: '#90CAF9',
+                                            border: '#0D47A1'
+                                        }
+                                    },
+                                    dropShadow: {
+                                        enabled: true,
+                                        top: 3,
+                                        left: 2,
+                                        blur: 4,
+                                        opacity: 1,
+                                    }
+                        },
+                        stroke: {
+                        curve: 'smooth',
+                        width: 3
+                        },
+                        //colors: ["#3F51B5", '#2196F3'],
+                        series: [],
+                        title: {
+                        text: 'Covid Data',
+                        align: 'left',
+                        offsetY: 25,
+                        offsetX: 20
+                        },
+                        grid: {
+                        show: true,
+                        padding: {
+                            bottom: 0
+                        }     
+                        },
+                        labels: data['date'],
+                        time: {
+            timezone: 'India Standard Time'
+        },
+            xaxis: {
+            tooltip: {
+                enabled: false
+            },      
+            labels: {          
+                datetimeFormatter: {
+                    year: 'yyyy',
+                    month: "MMM 'yy",
+                    day: 'dd MMM',
+                    hour: 'HH:mm',
+                }
+            },
+            type: 'datetime',
+        },
+        tooltip: {
+            x: {
+            format: 'dd MMM yyyy'
+            }
+        },
+            legend: {
+            position: 'top',
+            horizontalAlign: 'right',
+            offsetY: -20
+            }    
+        }
+        var chartLine = new ApexCharts(document.querySelector('#line-adwords'), optionsLine);
+        chartLine.render();                    
+                    chartLine.updateSeries([{
+                            name: "Confirmed",
+                            data: data['confirm'],
+                            color:'#f00'
+                        },
+                        {
+                            name: "Recovered",
+                            data: data['recover'],
+                            color:'#0f0'
+                        },
+                        {
+                            name: "Deceased",
+                            data: data['death'],
+                            color:'#AA0'
+                        }
+                        ])
+                    });
+        }      
+                }        
+        function myFunction2()
+        {
+                    if($('#predict').is(':checked'))  {
+                             var input = $('#statenames').val();    
+                    $.ajax({
+                    url: '{% url 'predict' %}',
+                    data: {
+                        'inputValue': input
+                    },
+                dataType: 'json',
+                success: function (data) {                        
+                }
+                }).then(function(data){
+                    var optionsLine = 
+                            {
+                                chart: {
+                                    height: 328,
+                                    type: 'line',
+                                    toolbar: {
+                                        show: true,
+                                        offsetX: 0,
+                                        offsetY: 40,
+                                        tools: {
+                                        download: true,
+                                        selection: true,
+                                        zoom: true,
+                                        zoomin: true,
+                                        zoomout: true,
+                                        pan: true,
+                                        reset: true | '<img src="/static/icons/reset.png" width="30">',
+                                        customIcons: []
+                                        },
+                                        export: {
+                                        csv: {
+                                            filename: "Covid_data",
+                                            columnDelimiter: ',',
+                                            headerCategory: 'category',
+                                            headerValue: 'value',
+                                            dateFormatter(timestamp) {
+                                            return new Date(timestamp).toDateString()
+                                            }
+                                        },
+                                        svg: {
+                                            filename: "Covid_Graph_SVG",
+                                        },
+                                        png: {
+                                            filename: "Covid_Graph_PNG",
+                                        }
+                                    },
+                                    autoSelected: 'zoom' 
+                                    },
+                                    zoom: {
+                                        enabled: true,
+                                        type: 'x',
+                                        resetIcon: {
+                                            offsetX: 310,
+                                            offsetY: 40,
+                                            fillColor: '#f00',
+                                            strokeColor: '#37474F'
+                                        },
+                                        selection: {
+                                            background: '#90CAF9',
+                                            border: '#0D47A1'
+                                        }
+                                    },
+                                    dropShadow: {
+                                        enabled: true,
+                                        top: 3,
+                                        left: 2,
+                                        blur: 4,
+                                        opacity: 1,
+                                    }
+                        },
+                        stroke: {
+                        curve: 'smooth',
+                        width: 3
+                        },
+                        //colors: ["#3F51B5", '#2196F3'],
+                        series: [],
+                        title: {
+                        text: 'Covid Data',
+                        align: 'left',
+                        offsetY: 25,
+                        offsetX: 20
+                        },
+                        grid: {
+                        show: true,
+                        padding: {
+                            bottom: 0
+                        }     
+                        },
+                        labels: data['date'],
+                        time: {
+            timezone: 'India Standard Time'
+        },
+            xaxis: {
+            tooltip: {
+                enabled: false
+            },      
+            labels: {          
+                datetimeFormatter: {
+                    year: 'yyyy',
+                    month: "MMM 'yy",
+                    day: 'dd MMM',
+                    hour: 'HH:mm',
+                }
+            },
+            type: 'datetime',
+        },
+        tooltip: {
+            x: {
+            format: 'dd MMM yyyy'
+            }
+        },
+            legend: {
+            position: 'top',
+            horizontalAlign: 'right',
+            offsetY: -20
+            }    
+        }
+        var chartLine = new ApexCharts(document.querySelector('#line-adwords'), optionsLine);
+        chartLine.render(); 
+                    chartLine.updateSeries([{
+                    name: "Confirmed Upper",
+                    data: data['confirm_upper'],
+                    color:'#f00'
+                },
+                {
+                    name: "Confirmed",
+                    data: data['confirm'],
+                    color:'#0f0'
+                },
+                {
+                    name: "Confirmed Lower",
+                    data: data['confirm_lower'],
+                    color:'#AA0'
+                }
+                ])
+             });
+
+
+        } else {
+            myFunction();
+        }
+        }
+         
+
+   </script>
+</head>
+
+<body class="">
+
+    <!-- Start wrapper-->
+    <div id="wrapper">
+
+        <!--Start sidebar-wrapper-->
+        <div id="sidebar-wrapper" data-simplebar="" data-simplebar-auto-hide="true">
+            <div class="navbar navbar-dark">
+                <a href="/Index" class="navbar-brand">
+                    <img src={% static '/images/logo-icon.png' %} class="logo-icon" alt="logo icon">
+                    Dashboard
+                </a>
+            </div>
+            <ul class="sidebar-menu do-nicescrol">
+                <li>
+                    <a href="/Index">
+                        <i class="zmdi zmdi-view-dashboard"></i> <span>Dashboard</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="/Subscribe">
+                        <i class="zmdi zmdi-notifications"></i> <span>Subscribe</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="/Data">
+                        <i class="fa fa-database" aria-hidden="true"></i> <span>Resources</span>
+                    </a>
+                </li>
+               <li>
+                    <a href="/Creators">
+                        <i class="fa fa-user" aria-hidden="true"></i> <span>Creators</span>
+                    </a>
+                </li>
+            </ul>
+
+        </div>
+        <!--End sidebar-wrapper-->
+
+        <!--Start topbar header-->
+        <header class="topbar-nav">
+            <nav class="navbar navbar-expand fixed-top">
+                <ul class="navbar-nav mr-auto align-items-center">
+                    <li class="nav-item">
+                        <a class="nav-link toggle-menu" href="javascript:void();">
+                            <i class="icon-menu menu-icon"></i>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </header>
+        <!--End topbar header-->
+
+        <div class="clearfix"></div>
+        <div class="content-wrapper">
+            <div class="container-fluid">
+
+                <!--Start Dashboard Content-->
+
+                <div class="main">
+                    <div class="row sparkboxes mt-4">
+                        <div class="col-md-3">
+                            <div class="card box box1">
+                                <div class="card-header text-center">
+                                    <h5>Confirmed </h5>
+                                </div>
+                                <div class="card-body">
+                                    <h5 class="card-title text-center">{{data_india.confirm|intcomma}}</h5>
+                                    <div id='spark1'></div>
+                                    </br>
+                                    <h5 class="card-title text-center"><span><i class="fa fa-arrow-up pr-2" aria-hidden="true"></i></span>{{data_india_active.active|last|intcomma}}</h5>                                    
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card box box2">
+                                <div class="card-header text-center">
+                                    <h5>Active </h5>
+                                </div>
+                                <div class="card-body">
+                                    <h5 class="card-title text-center">{{data_india.active|intcomma}}</h5>
+                                    <div id='spark2'></div>
+                                    </br>
+                                    <h5 class="card-title text-center"><span></span><pre style="margin:0px">  </pre></h5>
+                                    
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card box box3">
+                                <div class="card-header text-center">
+                                    <h5>Recovered </h5>
+                                </div>
+                                <div class="card-body">
+                                    <h5 class="card-title text-center">{{data_india.recover|intcomma}}</h5>
+                                    <div id='spark3'></div>
+                                    </br>
+                                    <h5 class="card-title text-center"><span><i class="fa fa-arrow-up pr-2" aria-hidden="true"></i></span>{{ data_india_recovered.recovered|last|intcomma}}</h5>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card box box4">
+                                <div class="card-header text-center">
+                                    <h5>Deceased </h5>
+                                </div>
+                                <div class="card-body">
+                                    <h5 class="card-title text-center">{{data_india.death|intcomma}}</h5>
+                                    <div id='spark4'></div>
+                                    </br>
+                                    <h5 class="card-title text-center"><span><i class="fa fa-arrow-up pr-2" aria-hidden="true"></i></span>{{ data_india_deaths.death|last|intcomma}}</h5>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+            </div>
+            <div class="container-fluid mt-1">
+                <div class="col-md-12">
+                    <div class="sparkboxes shadow mt-4">      
+                    <div class="row box box4">
+                        <div class="form-group col-sm-6 col-md-3"> 
+                            <form method='GET' id="myform"> {% csrf_token %}                            
+                                <select class="form-select bg-dark text-white mt-1" name="statenames" id="statenames" onchange="myFunction()" autofocus>
+                                    {% for rowval in state_table.state_data_table %}
+                                        <option class="bg-dark text-white" value='{{rowval.6}}'>
+                                        {{rowval.1}}
+                                        </option>
+                                  {% endfor %}
+                              </select>
+                          </form>                          
+                        </div>
+                        <div class="form-check form-switch col-sm-6 col-md-3">
+                                <input class="form-check-input ml-sm-1 ml-md-2 mt-3" type="checkbox" id="predict" onclick='myFunction2()' AutoPostBack="false">
+                                <label class="form-check-label ml-sm-5 ml-md-5 mt-3" for="predict">Predicted</label>
+                        </div>
+                            <div class="form-group col-sm-6 col-md-6">                  
+                            </div>                         
+                        <div id="line-adwords" class=""></div>
+                        </div>
+                        
+                    </div>
+                </div>
+            </div>
+
+            <div class="container-fluid sparkboxes mt-4">
+                <div class="box box4 col-12 col-lg-12">
+                    
+                        <div class="table-responsive">
+                            <table id="table" class="box box4" data-toggle="table"
+  data-search="true"  
+  data-show-columns="true" data-pagination="true" data-page-list="[10, 20, 30, All]" data-sort-class="table-active"
+  data-sortable="true">
+                    <thead class="">
+                        <tr class="tr-class-1">
+                            <th class="text-white" data-sortable="true" data-field="State">State / UT</th>
+                            <th class="text-center text-danger" data-field="Confirmed">Confirmed</th>
+                            <th class="text-center text-info" data-field="Active">Active</th>                                        
+                            <th class="text-center text-success" data-field="Recovered">Recovered</th>
+                            <th class="text-center text-secondary" data-field="Deceased">Deceased</th>
+                        </tr>
+                    </thead>
+                    <tbody class="">
+                        {% for rowval in state_table.state_data_table %}
+                        {% for key,val in state_table.last_update.items %}
+                        {% if rowval.6 == key %}
+                        <tr class="tr-class-1" id="tr-id-1">                                        
+                            <td class="text-white" scope="row">{{rowval.1}}</td>                                    
+                            <td class="text-center text-danger" scope="row"><h6 class="text-danger">{{rowval.2|intcomma}}</h6><h6 class="text-danger"><span><i class="fa fa-arrow-up text-danger pr-2" aria-hidden="true"></i></span>{{val.0|intcomma}}</h6></td>
+                            <td class="text-center text-info" scope="row"><h6 class="text-info">{{rowval.3|intcomma}}</h6></td>
+                            <td class="text-center text-success" scope="row"><h6 class="text-success">{{rowval.4|intcomma}}</h6><h6 class="text-success"><span><i class="fa fa-arrow-up text-success pr-2" aria-hidden="true"></i></span>{{val.1|intcomma}}</h6></td>
+                            <td class="text-center text-secondary" scope="row"><h6 class="text-secondary">{{rowval.5|intcomma}}</h6><h6 class="text-secondary"><span><i class="fa fa-arrow-up pr-2" aria-hidden="true"></i></span>{{val.2|intcomma}}</h6></td>
+                        </tr>
+                        {% endif %}
+                        {% endfor %}
+                        {% endfor %}
+                    </tbody>
+                </table>
+                    
+                </div>
+            </div>
+            <!--End Row-->
+             <div class="mt-4">
+                <div class="box box4 col-12 col-lg-12">
+<div id="map" class=""></div>
+</div>
+</div>
+            <!--End Dashboard Content-->
+
+        
+        </div>
+        <!-- End container-fluid-->
+
+    </div>
+    <!--End content-wrapper-->
+
+
+    </div>
+    <!--End wrapper-->
+
+
+    {{ data_india_active.date | json_script:"data_india_active_date" }} {{ data_india_active.confirm | json_script:"data_india_confirm_data" }} {{ data_india_active.active | json_script:"data_india_active_data" }} {{ data_india_recovered.recovered | json_script:"data_india_recover_data" }} {{ data_india_deaths.death | json_script:"data_india_death_data"}}
+    <!-- Bootstrap core JavaScript-->
+    <script src={% static '/js/jquery.min.js' %}></script>
+    <script src={% static '/js/popper.min.js' %}></script>
+    <script src={% static '/js/bootstrap.min.js' %}></script>
+<script>
+anychart.onDocumentReady(function() {
+        // create map
+        var map = anychart.map();
+
+
+        // create data set
+        var dataSet = anychart.data.set({{State|safe}}
+        );
+
+        // create choropleth series
+        series = map.choropleth(dataSet);
+
+        // set geoIdField to 'id', this field contains in geo data meta properties
+        series.geoIdField('id');
+
+        // set map color settings
+        series.colorScale(anychart.scales.linearColor('#939ebd', '#1b2c5c'));
+        series.hovered().fill('#fff');
+        series.tooltip().format(function(e){
+         return "Confirmed : " + e.getData("value") + "\n" +
+           "Active : " + e.getData("active") + "\n" +
+           "Recovered : " + e.getData("recovered") + "\n" +
+          "Deceased : " + e.getData("deaths")
+
+        });
+        // set geo data, you can find this map in our geo maps collection
+        // https://cdn.anychart.com/#maps-collection
+        map.geoData(anychart.maps['india']);
+        map.colorRange(true);
+map.background().fill({
+  keys: ["rgba(34, 29, 33,0.1)","rgba(34, 29, 33,0.1)"],
+  angle: 15,
+});
+        //set map container id (div)
+        map.container('map');
+
+        //initiate map drawing
+        map.draw();
+      });
+</script>
+
+    <!-- simplebar js -->
+    <script src={% static '/plugins/simplebar/js/simplebar.js' %}></script>
+    <!-- sidebar-menu js -->
+    <script src={% static '/js/sidebar-menu.js' %}></script>
+    
+    <!-- Custom scripts -->
+    <script src={% static '/js/app-script.js' %}></script>
+
+    <script src={% static '/js/scripts.js' %}></script>
+
+
+</body>
+
+</html>

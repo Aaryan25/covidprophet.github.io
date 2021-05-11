@@ -25,7 +25,7 @@ SECRET_KEY = 't%x*tf3)o8pk-9^m+iexl*cupah45h!470i#1d(w4iabu0piff'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['covidpred.netlify.app']
+ALLOWED_HOSTS = ['covidpred.netlify.app','https://covidpred.netlify.app','*.netlify.app']
 
 
 # Application definition

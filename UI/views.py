@@ -54,10 +54,10 @@ def predicted_data(request):
     forecast = m.predict(future)
     #print(forecast)
     #print(forecast[['ds', 'yhat', 'yhat_lower', 'yhat_upper']].tail(20))
-    dates = list(forecast['ds'].tail(20))
-    confirm_upper = list(map(int,forecast['yhat_upper'].tail(20)))
-    confirm = list(map(int,forecast['yhat'].tail(20)))
-    confirm_lower = list(map(int,forecast['yhat_lower'].tail(20)))
+    dates = list(forecast['ds'])
+    confirm_upper = list(map(int,forecast['yhat_upper']))
+    confirm = list(map(int,forecast['yhat']))
+    confirm_lower = list(map(int,forecast['yhat_lower']))
     data = {'date': dates,'confirm_upper': confirm_upper,'confirm_lower':confirm_lower,'confirm':confirm}
     return JsonResponse(data)
 
